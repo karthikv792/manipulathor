@@ -1,0 +1,3 @@
+allenact==0.2.2
+allenact_plugins[ithor]==0.2.2
+setuptools
