@@ -1,6 +1,12 @@
 from ithor_arm.ithor_arm_task_samplers import ArmPointNavTaskSampler
 from typing import Optional, Dict, Any, Sequence
 from ithor_arm.ithor_arm_tasks import AbstractPickUpDropOffTask
+from ithor_arm.arm_calculation_utils import initialize_arm
+from ithor_arm.ithor_arm_constants import transport_wrapper
+
+import random
+
+
 class SimpleArmDropNavSampler(ArmPointNavTaskSampler):
 
     def next_task(
@@ -48,7 +54,8 @@ class SimpleArmDropNavSampler(ArmPointNavTaskSampler):
             source_location["object_id"],
             source_location["object_location"],
         )
-
+        print("[INFO] Object ID: {}".format(source_location["object_id"]))
+        print("[EVENT INFO] Object Picked up: {}".format([i for i in event.metadata["objects"] if i["objectId"] == source_location["object_id"]][0]["isPickedUp"]))
         agent_state = source_location[
             "agent_pose"
         ]  # THe only line different from father - NOT CHANGED!!
@@ -68,7 +75,7 @@ class SimpleArmDropNavSampler(ArmPointNavTaskSampler):
                 horizon=agent_state["cameraHorizon"],
             )
         )
-
+        # print(event.metadata["arm"])
         # event = this_controller.step(
         #     dict(
         #         action="PickupMidLevel",
@@ -79,11 +86,20 @@ class SimpleArmDropNavSampler(ArmPointNavTaskSampler):
         while source_location["object_id"] not in this_controller.last_event.metadata["arm"]["heldObjects"]:
             event = this_controller.step(
                 dict(
-                    action="PickupMidLevel",
+                    action="PickUpMidLevel",
                     object_id=source_location["object_id"],
                 )
             )
+            print("[EVENT INFO] Object Picked up: {}".format(
+                [i for i in event.metadata["objects"] if i["objectId"] == source_location["object_id"]][0][
+                    "isPickedUp"]))
+            break
 
+            # print("Picking up object")
+            # print(this_controller.last_event.metadata["arm"]["heldObjects"])
+            # print(event.metadata["arm"]["heldObjects"])
+
+        print("[INFO] Picked up object")
         should_visualize_goal_start = [
             x for x in self.visualizers if issubclass(type(x), ImageVisualizer)
         ]

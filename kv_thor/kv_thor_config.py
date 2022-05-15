@@ -5,11 +5,17 @@ from kv_thor.dropoff_obj_task import SimpleArmDropNavSampler
 from typing import Dict, Any, List, Optional, Sequence
 from allenact.base_abstractions.sensor import Sensor
 from allenact.base_abstractions.task import TaskSampler
+from ithor_arm.ithor_arm_sensors import (
+    RelativeAgentArmToObjectSensor,
+    RelativeObjectToGoalSensor,
+    PickedUpObjSensor,
+)
+from allenact_plugins.ithor_plugin.ithor_sensors import RGBSensorThor
+import gym
 import torch
 class KVThorConfig():
-    
-
     def __init__(self):
+        super(KVThorConfig, self).__init__()
         self.REWARD_CONFIG = {
             "step_penalty": -0.01,
             "goal_success_reward": 10.0,
@@ -61,18 +67,12 @@ class KVThorConfig():
 
         self.CAP_TRAINING = None
 
-        self.TRAIN_SCENES: str = None
-        self.VAL_SCENES: str = None
-        self.TEST_SCENES: str = None
-
-        self.OBJECT_TYPES: Optional[Sequence[str]] = None
         self.VALID_SAMPLES_IN_SCENE = 1
         self.TEST_SAMPLES_IN_SCENE = 1
 
         self.NUMBER_OF_TEST_PROCESS = 10
 
         self.ADVANCE_SCENE_ROLLOUT_PERIOD: Optional[int] = None
-        self.SENSORS: Optional[Sequence[Sensor]] = None
 
         self.STEP_SIZE = 0.25
         self.ROTATION_DEGREES = 45.0
@@ -84,11 +84,22 @@ class KVThorConfig():
         self.SCREEN_SIZE = 224
         self.MAX_STEPS = 200
 
-    @classmethod
+        self.SENSORS = [
+            RGBSensorThor(
+                height=self.SCREEN_SIZE,
+                width=self.SCREEN_SIZE,
+                use_resnet_normalization=True,
+                uuid="rgb_lowres",
+            ),
+            RelativeAgentArmToObjectSensor(),
+            RelativeObjectToGoalSensor(),
+            PickedUpObjSensor(),
+        ]
+
     def make_sampler_fn(self,**kwargs) -> TaskSampler:
         from datetime import datetime
         now = datetime.now()
-        exp_name_w_time = cls.__name__ + "_" + now.strftime("%m_%d_%Y_%H_%M_%S_%f")
+        exp_name_w_time = "KVTHORCONFIG_" + now.strftime("%m_%d_%Y_%H_%M_%S_%f")
         if self.VISUALIZE:
             visualizers = [
                 ImageVisualizer(exp_name=exp_name_w_time),

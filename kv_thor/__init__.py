@@ -5,6 +5,7 @@ from manipulathor_baselines.armpointnav_baselines.experiments.ithor.armpointnav_
 from kv_thor.kv_thor_config import KVThorConfig
 from ithor_arm.ithor_arm_viz import ImageVisualizer, TestMetricLogger
 import random
+import gym
 """
 Initial State:
     - robot is at the table
@@ -17,8 +18,7 @@ Goal State:
 class KVThorEnv():
     def __init__(self):
         self.config = KVThorConfig()
-        print(self.config.TRAIN_SCENES)
-        self.scene_id = random.choice(len(self.config.TRAIN_SCENES))
+        self.scene_id = random.choice(range(len(self.config.TRAIN_SCENES)))
         kwargs = self.get_sampler_args()
         self.sampler = self.config.make_sampler_fn(**kwargs)
         self.task = self.sampler.next_task()
@@ -56,7 +56,7 @@ class KVThorEnv():
         return self.task.close()
 
     def action_space(self):
-        return self.task.action_space()
+        return self.task.action_space
 
     def _increment_num_steps_taken(self):
         self.task._increment_num_steps_taken()
