@@ -23,19 +23,26 @@ def main():
     total_reward = 0
     step = 0
     while True:
-        print("[MAIN INFO] Step: {}".format(step))
-        action = env.action_space().sample()
+        print("---------------- Step: {} ----------------".format(step))
+        if step<10:
+            action = 11
+        else:
+            action = env.action_space().sample()
+
         obs, reward, done, info = env.step(action)
+        print("[MAIN INFO] Observation: {}".format(obs['pickedup_object']))
         print("[MAIN INFO] Action: {}".format(action))
         print("[MAIN INFO] Reward: {}".format(reward))
         print("[MAIN INFO] Done: {}".format(done))
         print("[MAIN INFO] Info: {}".format(info))
+        print("[MAIN INFO] Arm dist from object: {}".format(env.arm_distance_from_obj()))
+        print("[MAIN INFO] Obj dist from goal: {}".format(env.obj_distance_from_goal()))
 
         env.render()
         total_reward += reward
         if done:
-            env.reset()
             break
+        step += 1
     print(f"total_reward: {total_reward}")
 
 

@@ -43,7 +43,9 @@ class KVThorEnv():
         return res
 
     def reset(self):
-        self.sampler.reset()
+        print("[KVThorEnv] reset")
+        kwargs = self.get_sampler_args()
+        self.sampler = self.config.make_sampler_fn(**kwargs)
         self.task = self.sampler.next_task()
 
     def step(self, action):
@@ -78,3 +80,15 @@ class KVThorEnv():
 
     def cumulative_reward(self):
         return self.task.cumulative_reward()
+
+    def arm_distance_from_obj(self):
+        return self.task.arm_distance_from_obj()
+
+    def obj_distance_from_goal(self):
+        return self.task.obj_distance_from_goal()
+
+    def get_original_object_distance(self):
+        return self.task.get_original_object_distance()
+
+    def calc_action_stat_metrics(self):
+        return self.task.calc_action_stat_metrics()

@@ -79,9 +79,9 @@ class KVThorConfig():
         self.VISIBILITY_DISTANCE = 1.0
         self.STOCHASTIC = False
 
-        self.CAMERA_WIDTH = 224
-        self.CAMERA_HEIGHT = 224
-        self.SCREEN_SIZE = 224
+        self.CAMERA_WIDTH = 224*2
+        self.CAMERA_HEIGHT = 224*2
+        self.SCREEN_SIZE = 224*2
         self.MAX_STEPS = 200
 
         self.SENSORS = [

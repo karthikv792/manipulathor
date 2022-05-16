@@ -55,7 +55,7 @@ class SimpleArmDropNavSampler(ArmPointNavTaskSampler):
             source_location["object_location"],
         )
         print("[INFO] Object ID: {}".format(source_location["object_id"]))
-        print("[EVENT INFO] Object Picked up: {}".format([i for i in event.metadata["objects"] if i["objectId"] == source_location["object_id"]][0]["isPickedUp"]))
+        # print("[EVENT INFO] Object Picked up: {}".format([i for i in event.metadata["objects"] if i["objectId"] == source_location["object_id"]][0]["isPickedUp"]))
         agent_state = source_location[
             "agent_pose"
         ]  # THe only line different from father - NOT CHANGED!!
@@ -75,31 +75,32 @@ class SimpleArmDropNavSampler(ArmPointNavTaskSampler):
                 horizon=agent_state["cameraHorizon"],
             )
         )
-        # print(event.metadata["arm"])
-        # event = this_controller.step(
-        #     dict(
-        #         action="PickupMidLevel",
-        #         object_id=source_location["object_id"],
+        # -----------------PICKING UP OBJECT-----------------
+        # our_obj = this_controller.get_object_by_id(source_location["object_id"])
+        # print(f'[EVENT INFO] Pickupable Objects: {event.metadata["arm"]["pickupableObjects"]}')
+        #
+        # iter = 0
+        # while source_location["object_id"] not in this_controller.last_event.metadata["arm"]["heldObjects"]:
+        #     event = this_controller.step(
+        #         dict(
+        #             action="PickUpMidLevel",
+        #             object_id=source_location["object_id"],
+        #         )
         #     )
-        # )
-        # check if the object is in the hand
-        while source_location["object_id"] not in this_controller.last_event.metadata["arm"]["heldObjects"]:
-            event = this_controller.step(
-                dict(
-                    action="PickUpMidLevel",
-                    object_id=source_location["object_id"],
-                )
-            )
-            print("[EVENT INFO] Object Picked up: {}".format(
-                [i for i in event.metadata["objects"] if i["objectId"] == source_location["object_id"]][0][
-                    "isPickedUp"]))
-            break
+        #     print("[EVENT INFO] Object Picked up: {}".format(
+        #         this_controller.is_object_at_low_level_hand(source_location["object_id"])
+        #     ))
+        #     iter += 1
+        #     if iter > 10:
+        #         break
+        #
+        #     # print("Picking up object")
+        #     # print(this_controller.last_event.metadata["arm"]["heldObjects"])
+        #     # print(event.metadata["arm"]["heldObjects"])
+        #
+        # print("[INFO] Picked up object")
+        # ---------------------------------------------------
 
-            # print("Picking up object")
-            # print(this_controller.last_event.metadata["arm"]["heldObjects"])
-            # print(event.metadata["arm"]["heldObjects"])
-
-        print("[INFO] Picked up object")
         should_visualize_goal_start = [
             x for x in self.visualizers if issubclass(type(x), ImageVisualizer)
         ]
